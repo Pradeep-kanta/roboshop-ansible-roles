@@ -8,10 +8,21 @@
     name: mongodb-org-shell
     state: present
 
-- name: get the catagories count
-  ansible.builtin.command: mongo --host mongodb.pradeepshop.online --quiet --eval 'db = db.getSiblingDB("{{component}}"); db.products.count()'
+- name: get the catalogue entries count
+  ansible.builtin.command: mongo --host mongodb.pradeepshop.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
   register: product_count
+  when: component == "catalogue"
+
+- name: get the user entries count
+  ansible.builtin.command: mongo --host mongodb.pradeepshop.online --quiet --eval 'db = db.getSiblingDB("users"); db.users.count()'
+  register: users_count
+  when: component == "user"
 
 - name: "load {{component}} data"
   ansible.builtin.command: "mongo --host mongodb.pradeepshop.online < /app/schema/{{component}}.js"
-  when: product_count.stdout == "0"
+  when: component == "catalogue" and product_count.stdout == "0"
+  #ignore_errors: true
+
+- name: "load {{component}} data"
+  ansible.builtin.command: "mongo --host mongodb.pradeepshop.online < /app/schema/{{component}}.js"
+  when: component == "user" and users_count.stdout == "0"
