@@ -18,11 +18,11 @@
   register: users_count
   when: component == "user"
 
-- name: "load {{component}} data"
-  ansible.builtin.command: "mongo --host mongodb.pradeepshop.online < /app/schema/{{component}}.js"
+- name: "load catalogue data"
+  ansible.builtin.shell: "mongo --host mongodb.pradeepshop.online < /app/schema/{{component}}.js"
   when: component == "catalogue" and product_count.stdout == "0"
   #ignore_errors: true
 
-- name: "load {{component}} data"
-  ansible.builtin.command: "mongo --host mongodb.pradeepshop.online < /app/schema/{{component}}.js"
+- name: "load user data"
+  ansible.builtin.shell: "mongo --host mongodb.pradeepshop.online < /app/schema/{{component}}.js"
   when: component == "user" and users_count.stdout == "0"
